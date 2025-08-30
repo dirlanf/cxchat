@@ -1,0 +1,25 @@
+{
+  "name": "cxchat",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "libs/*"
+  ],
+  "scripts": {
+    "dev:web": "npm --workspace apps/web run dev",
+    "dev:api": "npm --workspace apps/api run start:dev",
+    "build:web": "npm --workspace apps/web run build",
+    "build:api": "npm --workspace apps/api run build",
+    "lint": "eslint .",
+    "typecheck": "tsc -b",
+    "test": "npm -ws run test",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.4.0",
+    "@commitlint/config-conventional": "^19.4.0",
+    "eslint": "^9.9.0",
+    "typescript": "^5.8.3",
+    "husky": "^9.1.5"
+  }
+}
