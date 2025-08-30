@@ -8,6 +8,7 @@ export const envSchema = z.object({
   API_PORT: z.coerce.number().default(3000),
   DATABASE_URL: z.url(),
   JWT_ACCESS_SECRET: z.string().min(16),
+  JWT_ACCESS_EXPIRES: z.string().default('15m'),
   CORS_ORIGIN: z.string(),
 });
 

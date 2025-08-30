@@ -24,7 +24,7 @@ export class RegisterUserUseCase {
     password,
   }: RegisterUserInput): Promise<RegisterUserOutput> {
     const exists = await this.userRepository.findByEmail(email);
-    if (!exists) {
+    if (exists) {
       throw new UnauthorizedException('Email already in use');
     }
 

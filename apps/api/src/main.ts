@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import cookieParser from 'cookie-parser';
-import { validateEnv } from '../src/core/config/env';
+import { validateEnv } from './core/config/env';
 import { ValidationPipe } from '@nestjs/common';
 import { setupSwagger } from './app/swagger';
 

@@ -10,5 +10,5 @@ export function setupSwagger(app: INestApplication) {
     .build();
 
   const doc = SwaggerModule.createDocument(app, cfg);
-  SwaggerModule.setup('/doc', app, doc);
+  SwaggerModule.setup('/docs', app, doc);
 }
