@@ -9,15 +9,19 @@ import {
 import { Server, Socket } from 'socket.io';
 import { ListMessagesUseCase } from '../../application/use-cases/list-messages.usecase';
 import * as Jwt from '../../../auth/domain/ports/jwt.port';
-import { Inject } from '@nestjs/common';
+import { Inject, UseFilters, UsePipes } from '@nestjs/common';
 import { SendMessageUseCase } from '../../application/use-cases/send-message.usecase';
 import * as cookie from 'cookie';
+import { WsAllExceptionsFilter } from '../common/ws/ws-exception.filter';
+import { MessageListSchema, MessageSendSchema } from './schemas';
+import { ZodWsPipe } from '../common/ws/zod-ws.pipe';
 
 @WebSocketGateway({
   namespace: '/chat',
   transports: ['websocket'],
   cors: { origin: process.env.CORS_ORIGIN?.split(','), credentials: true },
 })
+@UseFilters(WsAllExceptionsFilter)
 export class ChatGateway implements OnGatewayConnection {
   @WebSocketServer()
   server!: Server;
@@ -47,12 +51,17 @@ export class ChatGateway implements OnGatewayConnection {
   }
 
   @SubscribeMessage('message:list')
-  async onList(@ConnectedSocket() client: Socket) {
-    const data = await this.listMessages.execute();
+  @UsePipes(new ZodWsPipe(MessageListSchema))
+  async onList(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() body: { limit?: number },
+  ) {
+    const data = await this.listMessages.execute(body.limit);
     client.emit('message:list', data);
   }
 
   @SubscribeMessage('message:send')
+  @UsePipes(new ZodWsPipe(MessageSendSchema))
   async onSend(
     @ConnectedSocket() client: Socket,
     @MessageBody() { text }: { text: string },
