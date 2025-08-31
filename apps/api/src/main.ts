@@ -9,7 +9,7 @@ import { setupSwagger } from './app/swagger';
 async function bootstrap() {
   const env = validateEnv(process.env);
   const app = await NestFactory.create(AppModule);
-  app.use(cookieParser());
+  app.use(cookieParser(env.JWT_ACCESS_SECRET));
   app.enableCors({
     origin: env.CORS_ORIGIN.split(','),
     credentials: true,

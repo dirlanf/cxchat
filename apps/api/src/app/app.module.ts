@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from 'src/core/prisma/prisma.module';
 import { AuthModule } from 'src/modules/auth/auth.module';
+import { ChatModule } from 'src/modules/chat/chat.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { AuthModule } from 'src/modules/auth/auth.module';
     }),
     PrismaModule,
     AuthModule,
+    ChatModule,
   ],
   controllers: [],
   providers: [],
