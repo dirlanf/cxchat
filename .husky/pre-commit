@@ -1,1 +1,1 @@
-echo "npm test"
+npm test
