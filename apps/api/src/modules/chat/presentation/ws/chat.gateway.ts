@@ -67,9 +67,10 @@ export class ChatGateway implements OnGatewayConnection {
     @MessageBody() { text }: { text: string },
   ) {
     const userId = (client as Record<string, any>).userId as string;
-    await this.sendMessage.execute({
+    const message = await this.sendMessage.execute({
       userId,
       text,
     });
+    this.server.emit('message:new', message);
   }
 }
