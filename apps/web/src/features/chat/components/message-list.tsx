@@ -15,7 +15,7 @@ function MessageListComponent({ messages }: MessageListProps) {
   }, [messages.length]);
 
   return (
-    <ScrollArea className="flex-1 border rounded p-3 max-h-[80vh] h-full">
+    <ScrollArea className="h-full p-4">
       <div className="space-y-2">
         {messages.map((message) => (
           <Message key={message.id} message={message} />
