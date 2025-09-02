@@ -13,7 +13,12 @@
     "lint": "eslint .",
     "typecheck": "tsc -b",
     "test": "npm -ws run test",
-    "prepare": "husky"
+    "prepare": "husky",
+    "db:generate": "npm --workspace apps/api run db:generate",
+    "db:migrate": "npm --workspace apps/api run db:migrate",
+    "db:migrate:deploy": "npm --workspace apps/api run db:migrate:deploy",
+    "db:reset": "npm --workspace apps/api run db:reset",
+    "db:studio": "npm --workspace apps/api run db:studio"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.4.0",
