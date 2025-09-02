@@ -107,4 +107,20 @@ describe('Auth E2E', () => {
       }),
     );
   });
+
+  it('POST /auth/register - should return 409 when email already exists', async () => {
+    const email = `duplicate+${Date.now()}@example.com`;
+    const userData = { name: 'Duplicate', email, password: 'secret123' };
+
+    await request(httpServer).post('/auth/register').send(userData).expect(201);
+
+    await request(httpServer).post('/auth/register').send(userData).expect(409);
+  });
+
+  it('POST /auth/login - should return 401 for invalid credentials', async () => {
+    await request(httpServer)
+      .post('/auth/login')
+      .send({ email: 'nonexistent@example.com', password: 'wrongpassword' })
+      .expect(401);
+  });
 });

@@ -1,4 +1,4 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, ConflictException } from '@nestjs/common';
 import * as UserRepository from '../../domain/ports/user-repository.port';
 import * as PasswordHasher from '../../domain/ports/password-hasher.port';
 
@@ -25,7 +25,7 @@ export class RegisterUserUseCase {
   }: RegisterUserInput): Promise<RegisterUserOutput> {
     const exists = await this.userRepository.findByEmail(email);
     if (exists) {
-      throw new UnauthorizedException('Email already in use');
+      throw new ConflictException('Email already in use');
     }
 
     const passwordHash = await this.passwordHasher.hash(password);
