@@ -194,5 +194,5 @@ feat(api): implement JWT token validation
 
 - **Web:** http://localhost:5173
 - **API:** http://localhost:3000
-- **API Docs (Swagger):** http://localhost:3000/api
+- **API Docs (Swagger):** http://localhost:3000/docs
 - **Prisma Studio:** http://localhost:5555
