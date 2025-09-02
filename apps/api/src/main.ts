@@ -20,7 +20,7 @@ async function bootstrap() {
 
   setupSwagger(app);
 
-  await app.listen(env.API_PORT ?? 3001);
+  await app.listen(env.PORT ?? 3001);
 }
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 bootstrap();

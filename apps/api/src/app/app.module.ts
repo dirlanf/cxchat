@@ -8,7 +8,7 @@ import { ChatModule } from 'src/modules/chat/chat.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
     }),
     PrismaModule,
     AuthModule,
