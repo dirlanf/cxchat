@@ -2,6 +2,7 @@ import {
   ConnectedSocket,
   MessageBody,
   OnGatewayConnection,
+  OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -22,7 +23,7 @@ import { ZodWsPipe } from '../common/ws/zod-ws.pipe';
   cors: { origin: process.env.CORS_ORIGIN?.split(','), credentials: true },
 })
 @UseFilters(WsAllExceptionsFilter)
-export class ChatGateway implements OnGatewayConnection {
+export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server!: Server;
 
@@ -43,10 +44,34 @@ export class ChatGateway implements OnGatewayConnection {
     }
 
     try {
-      const payload: { sub: string } = await this.jwt.verifyAccess(token);
+      const payload: { sub: string; name: string } =
+        await this.jwt.verifyAccess(token);
       (client as Record<string, any>).userId = payload.sub;
+      (client as Record<string, any>).userName = payload.name;
+      this.server.emit('user:joined', {
+        userName: payload.name,
+        joinedAt: Date.now(),
+      });
     } catch {
       client.disconnect();
+    }
+  }
+
+  async handleDisconnect(client: Socket) {
+    const raw = client.handshake.headers.cookie;
+    const rawParsed = raw ? cookie.parse(raw) : undefined;
+    const token = rawParsed ? rawParsed['access_token'] : undefined;
+    if (token) {
+      try {
+        const payload: { sub: string; name: string } =
+          await this.jwt.verifyAccess(token);
+
+        this.server.emit('user:left', {
+          userName: payload.name,
+          leftAt: Date.now(),
+        });
+        // eslint-disable-next-line no-empty
+      } catch {}
     }
   }
 

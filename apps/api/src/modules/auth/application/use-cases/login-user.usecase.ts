@@ -33,7 +33,10 @@ export class LoginUserUseCase {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const access_token = await this.jwt.signAccess({ sub: user.id });
+    const access_token = await this.jwt.signAccess({
+      sub: user.id,
+      name: user.name,
+    });
     return {
       access_token,
       user: { id: user.id, name: user.name, email: user.email },

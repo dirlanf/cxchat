@@ -44,7 +44,7 @@ describe('LoginUserUseCase', () => {
     });
 
     expect(hasher.compare).toHaveBeenCalledWith('secret', 'hashed');
-    expect(jwt.signAccess).toHaveBeenCalledWith({ sub: 'u1' });
+    expect(jwt.signAccess).toHaveBeenCalledWith({ sub: 'u1', name: 'Alice' });
     expect(output).toEqual({
       access_token: 'jwt.token',
       user: { id: 'u1', name: 'Alice', email: 'a@a.com' },
