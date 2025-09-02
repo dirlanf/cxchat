@@ -16,7 +16,9 @@ type Message = {
 export function ChatPage() {
   const { socket, connected } = useSocket();
   const { user } = useAuth();
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<
+    (Message & { isSystemMessage?: boolean })[]
+  >([]);
   const [text, setText] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -25,14 +27,43 @@ export function ChatPage() {
     socket.emit("message:list", {
       limit: 50,
     });
-    const onList = (list: Message[]) => setMessages(list.slice().reverse());
-    const onNew = (m: Message) => setMessages((prev) => [...prev, m]);
-    socket.on("message:list", onList);
-    socket.on("message:new", onNew);
+    const onMessageList = (list: Message[]) =>
+      setMessages(list.slice().reverse());
+    const onMessageNew = (m: Message) => setMessages((prev) => [...prev, m]);
+    const onUserJoined = (m: { userName: string; joinedAt: string }) =>
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: "-1",
+          userName: m.userName,
+          createdAt: m.joinedAt,
+          text: "Entrou na sala",
+          isSystemMessage: true,
+        },
+      ]);
+    const onUserLeft = (m: { userName: string; leftAt: string }) =>
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: "-1",
+          userName: m.userName,
+          createdAt: m.leftAt,
+          text: "Deixou a sala",
+          isSystemMessage: true,
+        },
+      ]);
+
+    socket.on("message:list", onMessageList);
+    socket.on("message:new", onMessageNew);
+    socket.on("user:joined", onUserJoined);
+    socket.on("user:left", onUserLeft);
     socket.on("error", (e) => console.warn("[ws error]", e));
+
     return () => {
-      socket.off("message:list", onList);
-      socket.off("message:new", onNew);
+      socket.off("message:list", onMessageList);
+      socket.off("message:new", onMessageNew);
+      socket.off("user:joined", onUserJoined);
+      socket.off("user:left", onUserLeft);
     };
   }, [socket]);
 
@@ -48,19 +79,19 @@ export function ChatPage() {
 
   return (
     <div className="max-w-3xl mx-auto p-4 grid gap-4 h-dvh">
-      <header className="flex items-center justify-between">
+      <header className="flex items-center justify-between max-h-10">
         <h1 className="text-xl font-semibold">Chat</h1>
         <div className="text-sm opacity-70">
           {connected ? "Online" : "Offline"} • {user?.name}
         </div>
       </header>
 
-      <ScrollArea className="flex-1 border rounded p-3 max-h-[80vh]">
+      <ScrollArea className="flex-1 border rounded p-3 max-h-[80vh] h-full">
         <div className="space-y-2">
           {messages.map((m) => (
             <div
               key={m.id}
-              className="flex w-full justify-between text-sm hover:bg-slate-100 p-1 pl-1.5 pr-1.5 rounded"
+              className={`flex w-full justify-between text-sm ${m.isSystemMessage ? "bg-slate-200" : "bg-white"} hover:bg-slate-100 p-1 pl-1.5 pr-1.5 rounded`}
             >
               <span className="w-full overflow-x-hidden">
                 <span className="font-medium">{m.userName}</span>: {m.text}
