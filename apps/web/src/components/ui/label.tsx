@@ -5,7 +5,7 @@ import * as LabelPrimitive from "@radix-ui/react-label";
 
 import { cn } from "@/lib/utils";
 
-function Label({
+const Label = React.memo(function Label({
   className,
   ...props
 }: React.ComponentProps<typeof LabelPrimitive.Root>) {
@@ -19,6 +19,6 @@ function Label({
       {...props}
     />
   );
-}
+})
 
 export { Label };

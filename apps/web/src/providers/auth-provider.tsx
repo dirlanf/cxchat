@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 import { apiFetch } from "@/shared/api/http";
 
 type User = { id: string; name: string; email: string };
@@ -17,7 +23,8 @@ const AuthContext = createContext<AuthCtx>({
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const refresh = async () => {
+
+  const refresh = useCallback(async () => {
     try {
       const me = await apiFetch<User>("/auth/me");
       setUser(me);
@@ -26,10 +33,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
   useEffect(() => {
     refresh();
-  }, []);
+  }, [refresh]);
 
   return (
     <AuthContext.Provider value={{ user, loading, refresh }}>
